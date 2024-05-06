@@ -12,6 +12,7 @@ int gameOver;
 int score;
 int dinoX, dinoY;
 int cactusX, cactusY;
+int isJumping;
 
 void setup() {
     gameOver = 0;
@@ -20,6 +21,7 @@ void setup() {
     dinoY = HEIGHT - 1;
     cactusX = WIDTH - 5;
     cactusY = HEIGHT - 1;
+    isJumping = 0;
 }
 
 void draw() {
@@ -35,7 +37,7 @@ void draw() {
         }
         printf("\n");
     }
-    for (int i=0; i< WIDTH; i++){
+    for (int i = 0; i < WIDTH; i++) {
         printf("_");
     }
     printf("\nScore: %d\n", score);
@@ -44,24 +46,33 @@ void draw() {
 void input() {
     if (_kbhit()) {
         char key = _getch();
-        if (key == ' ')
+        if (key == ' ' && !isJumping)
             jump();
     }
 }
 
 void jump() {
-    if (dinoY >= HEIGHT - JUMP_HEIGHT)
-        dinoY -= JUMP_HEIGHT;
+    isJumping = 1;
+    dinoY -= JUMP_HEIGHT;
 }
 
 void update() {
-    if (dinoY < HEIGHT - 1)
-        dinoY++;
+    if (isJumping) {
+        if (dinoY >= HEIGHT - 1) {
+            isJumping = 0;
+            dinoY = HEIGHT - 1;
+        } else {
+            dinoY++;
+        }
+    }
+
     cactusX--;
+
     if (cactusX <= 0) {
         cactusX = WIDTH - 5;
         score++;
     }
+
     if ((cactusX == dinoX) && (cactusY == dinoY))
         gameOver = 1;
 }
